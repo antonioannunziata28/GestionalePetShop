@@ -7,11 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import it.betacom.dao.impl.UtentiDaoImpl;
-import it.betacom.model.Utenti;
 
 /**
  * Servlet implementation class DeleteUtente
@@ -19,8 +15,6 @@ import it.betacom.model.Utenti;
 @WebServlet("/DeleteUtente")
 public class DeleteUtente extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	protected static final Logger logger = LogManager.getLogger("Register");
        
     /**
      * @see HttpServlet#HttpServlet()
