@@ -24,6 +24,7 @@
     			<div class="collapse navbar-collapse" id="navbarResponsive">
     		
 	      		<ul class="navbar-nav ms-auto">
+	      			
 	        		<li class="nav-item active">
 	          			<a class="nav-link" href="index.jsp">Home</a>
 	        		</li>
@@ -44,7 +45,8 @@
 	        					<a class="nav-link" href="login.jsp">Area riservata</a>
 	        				</c:when>
 	          				<c:otherwise>
-	          				<a class="nav-link" href="Logout">Logout</a>
+	          				<a class="nav-link" href="Logout">${utente.getUsername()}</a>
+	          				
 	          				</c:otherwise>
 	          			</c:choose>
 	        		</li>
@@ -65,6 +67,19 @@
         <div class="col-md-12">
         <h4>Lista degli utenti</h4>
         <div class="table-responsive">
+        
+        <!-- MESSAGGIO DI ELIMINAZIONE AVVENUTA CON SUCCESSO -->
+		<%
+		String messaggioEliminazione = (String) session.getAttribute("messaggioEliminazione");
+		if(messaggioEliminazione != null && !messaggioEliminazione.isEmpty()) {
+		%>
+		<div class="bg-warning text-light text-center rounded">
+		<%= messaggioEliminazione %>
+		</div>
+		<%
+		}
+		session.removeAttribute("messaggioEliminazione");
+		%>
   
               <table id="mytable" class="table table-bordred table-striped">
                    <thead>
@@ -82,32 +97,30 @@
                    </thead>
                 
     			<tbody>
-    				<c:forEach items="<%= lista %>" var="utente">
-    					<tr class="user-raw" data-user-id="${utente.getId()}">
-						    <td>${utente.getId()}</td>
-						    <td>${utente.getNome()}</td>
-						    <td>${utente.getCognome()}</td>
-						    <td>${utente.getEmail()}</td>
-						    <td>${utente.getUsername()}</td>
-						    <td>${utente.getStato()}</td>
-						    <td>${utente.getRuolo()}</td>
+    				<c:forEach items="<%= lista %>" var="u">
+    					<tr class="user-raw" data-user-id="${u.getId()}">
+						    <td>${u.getId()}</td>
+						    <td>${u.getNome()}</td>
+						    <td>${u.getCognome()}</td>
+						    <td>${u.getEmail()}</td>
+						    <td>${u.getUsername()}</td>
+						    <td>${u.getStato()}</td>
+						    <td>${u.getRuolo()}</td>
 						    
 						    <c:if test= "${sessionScope.utente.ruolo eq 'A'}">
 						    <td>
-						    	<p data-placement="top" data-toggle="tooltip" title="Edit">
-						    		<button class="btn btn-primary btn-xs" data-title="Edit" onclick="openEditModal(${utente.getId()})">
-						    			<i class="fa-solid fa-pencil"></i>
-						    		</button>
-						    	</p>
+						    	<a href="updateUtente.jsp?userId=${u.getId()}" class="btn btn-primary btn-xs">Modifica</a>
 						    </td>
 						    
 		    				<td>
-		    					<p data-placement="top" data-toggle="tooltip" title="Delete">
-		    						<button class="btn btn-danger btn-xs" data-title="Delete" onclick="openDeleteModal(${utente.getId()})">
-		    							<i class="fa-solid fa-trash"></i>
-		    						</button>
-		    					</p>
+		    					<form action="DeleteUtente" method="post">
+		    						<input type="hidden" name="userId" value="${u.getId()}">
+			    						<button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Sei sicuro di voler eliminare l\'utente?')">
+			    							<i class="fa-solid fa-trash"></i>
+			    						</button>
+		    					</form>
 		    				</td>
+		    				
 				    		</c:if>
 				    	</tr>
 				    </c:forEach>
@@ -118,63 +131,10 @@
        </div>
 	</div>
 	</div>
-
-
-	<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-      <div class="modal-dialog">
-    		<div class="modal-content">
-          		<div class="modal-header">
-        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-        			<h4 class="modal-title custom_align" id="Heading">Edit Your Detail</h4>
-      			</div>
-       <div class="modal-body">
-          	
-         	<div class="form-group">
-        		<input class="form-control " type="text" placeholder="Mohsin">
-        	</div>
-        	
-        	<div class="form-group">
-        		<input class="form-control " type="text" placeholder="Irshad">
-        	</div>
-        	
-        <div class="form-group">
-        	<textarea rows="2" class="form-control" placeholder="CB 106/107 Street # 11 Wah Cantt Islamabad Pakistan"></textarea>
-        </div>
-      </div>
-          <div class="modal-footer ">
-        <button type="button" class="btn btn-warning btn-lg" style="width: 100%;"><span class="glyphicon glyphicon-ok-sign"></span> Update</button>
-      </div>
-        </div>
-    <!-- /.modal-content --> 
-  </div>
-      <!-- /.modal-dialog --> 
-    </div>
-    
-    
-    
-    <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-      <div class="modal-dialog">
-    <div class="modal-content">
-          <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-        <h4 class="modal-title custom_align" id="Heading">Delete this entry</h4>
-      </div>
-          <div class="modal-body">
-       
-       <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to delete this Record?</div>
-       
-      </div>
-        <div class="modal-footer ">
-        <button type="button" class="btn btn-success" ><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> No</button>
-      </div>
-        </div>
-    <!-- /.modal-content --> 
-  </div>
-      <!-- /.modal-dialog --> 
-    </div>
 	
-	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+	<script src="public/js/listaUtenti.js"></script>
 </body>
 </html>
 
